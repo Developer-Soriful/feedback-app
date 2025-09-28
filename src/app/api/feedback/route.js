@@ -1,35 +1,36 @@
-import { feedbackData, getNextId } from "@/data/feedback";
 import { NextResponse } from "next/server";
 
+const feedbackData = [
+    { id: 1, name: "John", email: "john@example.com", feedback: "Nice project!", timestamp: new Date() },
+];
 
-
-// this is for get request
-export async function GET(request) {
-    return NextResponse.json({ success: true, data: feedbackData.slice().reverse() })
+export async function GET() {
+    return NextResponse.json({ success: true, data: feedbackData });
 }
 
-// this is for post request 
 export async function POST(request) {
     try {
-        const body = await request.json()
+        const body = await request.json();
         const { name, email, feedback } = body;
-        // this is check email name feedback have or not
+
         if (!name || !email || !feedback) {
-            return NextResponse.json({ success: false, message: 'missing required fields' }, { status: 400 })
+            return NextResponse.json(
+                { success: false, message: "Missing required fields" },
+                { status: 400 }
+            );
         }
-        // this is for user enter feedback data 
+
         const newFeedback = {
-            id: getNextId(),
+            id: Date.now(),
             name,
             email,
             feedback,
-            timestamp: new Date()
-        }
-        // then i will push this new feedback data in the prev data
-        feedbackData.push(newFeedback)
-        return NextResponse.json({ success: true, data: newFeedback }, { status: 201 })
+            timestamp: new Date(),
+        };
+
+        return NextResponse.json({ success: true, data: newFeedback }, { status: 201 });
     } catch (error) {
-        console.error('error post request', error)
-        return NextResponse.json({ success: false, message: "Internal Server Error" })
+        console.error("Error in POST:", error);
+        return NextResponse.json({ success: false, message: "Internal Server Error" }, { status: 500 });
     }
 }
