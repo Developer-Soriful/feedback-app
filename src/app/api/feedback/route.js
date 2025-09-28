@@ -19,7 +19,7 @@ export async function POST(request) {
         }
         // this is for user enter feedback data 
         const newFeedback = {
-            id: getNextId,
+            id: getNextId(),
             name,
             email,
             feedback,
